@@ -1,6 +1,5 @@
 import React,{useEffect, useState} from 'react'
 import CarrouselComponent from '../components/CarrouselComponent'
-import SearchComponent from '../components/SearchComponent'
 import CardRestaurant from '../components/cards/CardRestaurant'
 import { getAllResturantsRequest } from '../api/Restaurant.pi'
 
@@ -23,20 +22,21 @@ export default function HomePage() {
 
   return (
     <div className='m-2 mt-4'>
-        <h1 className='text-3xl my-5 text-center'>Restaurantes</h1>
-        <CarrouselComponent/>
-        <SearchComponent value={search} onChange={searcher}/>
-        
-        {results.map((restaurant, index) =>(
-          <CardRestaurant 
-          key={index}
-          card_img={restaurant.logo_url}
-          card_title={restaurant.name}
-          LinkTo={`/restaurants/${restaurant.id}/details/menu`}
-          is_open={restaurant.is_open}
-          />
+      <h1 className='text-3xl my-5 text-center'>Restaurantes</h1>
+      <CarrouselComponent />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+        {results.map((restaurant, index) => (
+          <div key={index} className="p-4">
+            <CardRestaurant
+              card_img={restaurant.logo_url}
+              card_title={restaurant.name}
+              LinkTo={`/restaurants/${restaurant.id}/details/menu`}
+              is_open={restaurant.is_open}
+            />
+          </div>
         ))}
-        
+      </div>
     </div>
-  )
+  );
 }

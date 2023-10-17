@@ -56,8 +56,8 @@ export default function RegisterAsRestaurant() {
 
   // },[clicksCount])
   return (
-    <div className = "m-2">
-      <h2 className = "text-xl font-bold color-text-primary">Datos del restaurante</h2>
+    <div className = "m-2 md:w-1/2 md:mx-auto md:mt-3">
+      <h2 className = "text-xl font-bold color-text-primary mt-14">Datos del restaurante</h2>
       {imageError === null ? "" : <Alert className="mt-3" severity="error">{imageError}</Alert>}
       <Formik
         initialValues={{
