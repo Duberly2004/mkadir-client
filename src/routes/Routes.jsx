@@ -14,7 +14,7 @@ export default function Routes() {
     { path: "auth/*", element: <IsAuthenticated/> ,children:auth_routes},
     { path: "profile/*", element: <AuthRequired/>,children:ProfileRoutes},
     { path: "restaurants/*", element: <Outlet/>,children:RestaurantsRoutes},
-    { path: "admin/*", element:<AuthRequired children={<Outlet/>}/> , children:admin_routes}
+    { path: "admin/*", element:<AuthRequired children={<Outlet/>}/> , children:admin_routes},
   ]);
 
   return routes;

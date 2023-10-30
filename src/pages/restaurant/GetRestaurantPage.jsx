@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {useAuth} from '../../context/AuthContext'
+import {useAuth} from '../../context/AuthContext';
+import { getMenusRequest,getMenuIsPublishedRequest } from '../../api/Restaurant.pi';
+import { getEmployeesRequest } from '../../api/Employeeapi';
+
 export default function GetRestaurantPage() {
   const { restaurant_id } = useParams();
   const { user,getRestaurant,restaurantData} = useAuth()
   const [isLoading, setIsLoading] = useState(true);
+  const [employeeCount, setEmployeeCount] = useState(0); 
+  const [menuCount, setMenuCount] = useState(0); 
+  const [isMenuPublished, setIsMenuPublished] = useState(false); 
 
   const getRestaurantData = async () => {
     try {
@@ -20,7 +26,33 @@ export default function GetRestaurantPage() {
 
   useEffect(() => {
     getRestaurantData();
-  }, []);
+    getEmployeesRequest(restaurant_id)
+      .then((response) => {
+        const employees = response.data;
+        setEmployeeCount(employees.length);
+        console.log(employees.length);
+      })
+      .catch((error) => {
+        console.error('Error fetching employees:', error);
+      });
+
+    getMenusRequest(restaurant_id)
+      .then((response) => {
+        const menus = response.data;
+        setMenuCount(menus.length);
+      })
+      .catch((error) => {
+        console.error('Error fetching menus:', error);
+      });
+      getMenuIsPublishedRequest(restaurant_id)
+      .then((response) => {
+        const isPublished = response.data; 
+        setIsMenuPublished(isPublished);
+      })
+      .catch((error) => {
+        console.error('Error fetching menu publication status:', error);
+      });
+  }, [restaurant_id]);
 
   if (isLoading) return <h1>Loading</h1>;
   return (
@@ -38,9 +70,9 @@ export default function GetRestaurantPage() {
 
             <p className='text-start text-xl font-semibold mt-2'>Detalles <span className='text-sm font-normal'>(Solo tu puedes ver esto)</span></p>
             <p className='text-start mt-1'><span className='font-semibold'>Propietario:</span> {user.paternal_surname}  {user.maternal_surname} {user.name}</p>
-            <p className='text-start'><span className='font-semibold'>Total de empleados:</span> 10</p>
-            <p className='text-start'><span className='font-semibold'>Total de menus:</span> 2</p>
-            <p className='text-start'><span className='font-semibold'>Menú publicado:</span> Si</p>
+            <p className='text-start'><span className='font-semibold'>Total de empleados: </span>{employeeCount}</p>
+            <p className='text-start'><span className='font-semibold'>Total de menus: </span>{menuCount}</p>
+            <p className='text-start'><span className='font-semibold'>Menú publicado: </span> {isMenuPublished ? 'Sí' : 'No'}</p>
         </div>
   </div>
   );

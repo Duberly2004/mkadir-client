@@ -31,6 +31,8 @@ export default function AdminPage() {
         <CardAdmin 
         car_img={employees}
         card_title = "Empleados"
+        to_url="employees"
+
         />
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import GetEmployeesPage from '../pages/restaurant/employees/GetEmployeesPage'
+import ProfileEmployeePage from '../pages/profile/ProfileEmployeePage'
 import GetRestaurantsPage from '../pages/restaurant/GetRestaurantsPage'
 import GetMenusPage from '../pages/restaurant/menu/GetMenusPage'
 import GetMenuIsPublishedPage from '../pages/restaurant/menu/GetMenuIsPublishedPage'
@@ -11,7 +12,9 @@ import Location from '../components/restaurat/Location'
 import AuthRequired from '../middlewares/AuthRequired';
 import GetRestaurantPage from '../pages/restaurant/GetRestaurantPage';
 const employees_routes = [
-  { path: "", element: <GetEmployeesPage/> }
+  { path: "", element: <GetEmployeesPage/> },
+  { path: ":employee_id", element: <ProfileEmployeePage /> }
+
 ]
 
 const work_schedule_routes = [

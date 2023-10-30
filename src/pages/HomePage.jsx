@@ -9,6 +9,7 @@ export default function HomePage() {
   const [search,setSearch] = useState('')
   const showData = async()=>{
     const res = await getAllResturantsRequest()
+    console.log(res)
     setRestaurants(res.data)
   }
   const searcher = (e) => {
@@ -24,7 +25,7 @@ export default function HomePage() {
   return (
     <div className='m-2 mt-4'>
         <h1 className='text-3xl my-5 text-center'>Restaurantes</h1>
-        <CarrouselComponent/>
+        <CarrouselComponent />
         <SearchComponent value={search} onChange={searcher}/>
         
         {results.map((restaurant, index) =>(

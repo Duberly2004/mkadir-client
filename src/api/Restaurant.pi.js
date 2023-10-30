@@ -10,4 +10,5 @@ export const getResturantRequest = async (restaurant_id) => await axios.get(`res
 export const deleteResturantRequest = async (restaurant_id) => await axios.delete(`restaurants/delete/${restaurant_id}`);
 export const updateResturantRequest = async (restaurant_id,restaurant_data) => await axios.put(`restaurants/update/${restaurant_id}`,restaurant_data);
 
+export const getMenusRequest = async (restaurant_id) => {return await axios.get(`restaurants/${restaurant_id}/menus/`)};
 export const getMenuIsPublishedRequest = async (restaurant_id) => await axios.get(`restaurants/${restaurant_id}/menus/is-published`)
