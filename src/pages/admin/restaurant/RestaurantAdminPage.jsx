@@ -4,6 +4,10 @@ import { Link, Outlet, useNavigate,useParams } from 'react-router-dom';
 import { useRestaurantContext } from '../../../context/RestaurantContext';
 import SpinerComponent from '../../../components/SpinerComponent';
 import RestaurantDoc from '../../../components/documentation/RestaurantDoc'
+
+//icon employee
+import employees from '../../../imgs/icons/employees.svg'
+
 export default function RestaurantAdminPage() {
     const { restaurants,getRestaurants ,isLoading} = useRestaurantContext()
     const [search, setSearch] = useState('');
@@ -45,8 +49,10 @@ export default function RestaurantAdminPage() {
                                 <th className="px-4 py-2 border border-white text-gray-600">Nombre</th>
                                 <th className="px-4 py-2 border border-white text-gray-600">Estado</th>
                                 <th className="px-4 py-2 border border-white text-gray-600">Ubicación</th>
+                                <th className="px-4 py-2 border border-white text-gray-600">Empleados</th>
                             </tr>
                         </thead>
+                        
                         <tbody>
                             {results.map((restaurant, index) => (
                                 <tr onClick={()=>handleGetRestaurant(restaurant.id)} key={index} className="hover:bg-gray-200 text-center cursor-pointer">
@@ -65,6 +71,7 @@ export default function RestaurantAdminPage() {
                                     <td className="border px-4 py-2">{restaurant.name}</td>
                                     <td className="border px-4 py-2">{restaurant.is_open ? "Abierto" : "Cerrado"}</td>
                                     <td className="border px-4 py-2">{restaurant.address}</td>
+                                    <td className="border px-4 py-2 flex justify-center items-center" > <Link to={`/admin/restaurants/${restaurant.id}/employees`} onClick={(e) => e.stopPropagation()}><img src={employees}/></Link></td>
                                 </tr>
                             ))}
                         </tbody>

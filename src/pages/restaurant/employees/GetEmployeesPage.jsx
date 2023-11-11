@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CardEmployees from '../../../components/cards/CardEmployees';
-import { getEmployeesRequest } from '../../../api/Employeeapi';
+import { getEmployeeRequest } from '../../../api/Employeeapi';
 import { useParams } from 'react-router-dom';
 
 export default function GetEmployeesPage() {
@@ -9,7 +9,7 @@ export default function GetEmployeesPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getEmployeesRequest(restaurant_id);
+      const response = await getEmployeeRequest(restaurant_id);
       console.log(response)
       setEmployees(response.data);
     };

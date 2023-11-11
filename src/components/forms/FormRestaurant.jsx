@@ -29,7 +29,7 @@ export default function FormRestaurant() {
     const [restaurant,setRestaurant] = useState(null)
     const [imageUrl,setImageUrl] = useState(null)
     const [imageError,setImageError] = useState(null)
-    const [clicksCount, setClicksCount] = useState(0);
+    const [clicksCount, setClicksCount] = useState(0)
 
     useEffect(() => {
       if (restaurant_id && !restaurant) {
@@ -238,7 +238,7 @@ export default function FormRestaurant() {
       {restaurant_id?
       <div className='flex gap-2  justify-center mt-3'>
           <div className="grid grid-cols-2 gap-4">
-            <CardAdmin car_img={employees} card_title = "Mis empleados"/>
+            <CardAdmin car_img={employees}    to_url="employees" card_title = "Mis empleados"/>
             <CardAdmin car_img={menu} card_title = "Mi menú"/>
             <CardAdmin car_img={schedule} card_title = "Horario de trabajo"/>
             <CardAdmin car_img={food} card_title = "Mi platos"/>

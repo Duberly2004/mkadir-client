@@ -10,23 +10,23 @@ import GetRestaurantAdminPage from "../pages/admin/restaurant/GetRestaurantAdmin
 import GetEmployeeAdminPage from "../pages/admin/employee/GetEmployeeAdminPage";
 
 const restuarants_admin_routes = [
-  { path: "",element:<RestaurantAdminPage/>},
-  { path: ":restaurant_id",element:<GetRestaurantAdminPage/>},
-  { path: "create",element:<FormRestaurant/>},
-  { path: "update/:restaurant_id",element:<FormRestaurant/>},
-]
+  { path: "", element: <RestaurantAdminPage /> },
+  { path: "create", element: <FormRestaurant /> },
+  { path: "update/:restaurant_id", element: <FormRestaurant /> },
+  { path: ":restaurant_id", element: <GetRestaurantAdminPage /> },
+];
 
 const employees_admin_routes = [
-  { path: "",element:<EmployeeAdminPage/>},
-  { path: ":employee_id",element:<GetEmployeeAdminPage/>},
-  { path: "create",element:<FormEmployee/>},
-  { path: "update/:employee_id",element:<FormEmployee/>},
-]
+  { path: "", element: <EmployeeAdminPage /> },
+  { path: "create", element: <FormEmployee /> },
+  { path: "update/:employee_id", element: <FormEmployee /> },
+  { path: ":employee_id", element: <GetEmployeeAdminPage /> },
+];
+
 const admin_routes = [
-    { path: "", element: <AdminPage/> },
-    { path: "restaurants/*", element: <Outlet/>,children:restuarants_admin_routes},
-    { path: "employees/*", element: <Outlet/>,children:employees_admin_routes}
+  { path: "", element: <AdminPage /> },
+  { path: "restaurants/*", element: <Outlet />, children: restuarants_admin_routes },
+  { path: "restaurants/:restaurant_id/employees/*", element: <Outlet />, children: employees_admin_routes },
+];
 
-  ];
-
-export default admin_routes
+export default admin_routes;

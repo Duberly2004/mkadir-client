@@ -15,9 +15,9 @@ import food from '../../../imgs/icons/food.svg'
 import schedule from '../../../imgs/icons/schedule.svg'
 import { useEmployeeContext } from '../../../context/EmployeeContext';
 
-export default function GetRestaurantAdminPage() {
+export default function GetEmployeeAdminPage() {
   const navigateTo = useNavigate()
-  const { restaurant_id } = useParams();
+  const { employee_id } = useParams();
   const [imageUrl,setImageUrl] = useState(null)
   const [loading,setLoading] = useState(false)//Loading
   const [ employeeData,setEmployeeData] = useState(null)
@@ -59,7 +59,7 @@ export default function GetRestaurantAdminPage() {
     const res = await verifyPassword(password)
     if(res){
       try {
-        const res_delete_employee = await deleteRestaurant(employee_id)
+        const res_delete_employee = await deleteEmployee(employee_id)
         if(res_delete_employee.data){
           return navigateTo('/admin/employees')
         }
@@ -209,7 +209,7 @@ export default function GetRestaurantAdminPage() {
     <div className='flex justify-center mt-5'>
             <WarningModal 
             titleButtonModal="Eliminar Empleado"
-            navigateToModal={'/admin/empleado'}
+            navigateToModal={'/admin/employees'}
             textHeaderComponent={<p className='py-3 pl-3 font-semibold'><span className='text-red-500'>Eliminar/</span> {employeeData.name}</p>}
             textModalComponent={
               <div>

@@ -1,34 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useEmployeeContext } from '../../context/EmployeeContext';
-import { InputForm } from '../specific/ComponentsForm';
-import { Alert } from '@mui/material';
-import CardAdmin from '../cards/CardAdmin';
-import WarningModal from '../modals/WarningModal';
-import SpinerComponent from '../../components/SpinerComponent';
+import React, { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useEmployeeContext } from '../../context/EmployeeContext'
+import { InputForm } from '../specific/ComponentsForm'
+import { Alert } from '@mui/material'
+import WarningModal from '../modals/WarningModal'
 
 // Iconos
-import { RiAdminFill } from 'react-icons/ri'
-import menu from '../../imgs/icons/menu.svg'
-import employees from '../../imgs/icons/employees.svg'
-import food from '../../imgs/icons/food.svg'
-import schedule from '../../imgs/icons/schedule.svg'
 import { useAuth } from '../../context/AuthContext'
-import img_default_profile_employee from '../../imgs/img_default_profile_resturant.svg'
-import img_loading_profile from '../../imgs/gifs/img_loading_profile.gif'
+
+// Spiner
+import SpinerComponent from '../../components/SpinerComponent'
 
 //Image logo Controller
 import { uploadFileImage } from '../functions/ControllerImage'
-import { Formik } from 'formik';
+import { Formik } from 'formik'
 import { deleteImage2 } from '../../firebase/config'
 
 export default function FormEmployee() {
-    const { getEmployee, isLoading, setIsLoading, createEmployee, updateEmployee } = useEmployeeContext();
-    const navigateTo = useNavigate();
-    const { employee_id } = useParams();
-    const [employee, setEmployee] = useState(null);
+    const [loadingImage,setLoadingImage] = useState(false)//Loading
+    const { messages,setMessages,getEmployee, isLoading, setIsLoading,deleteEmployee, createEmployee, updateEmployee } = useEmployeeContext();
+    const { verifyPassword,errors } = useAuth()
+    const navigateTo = useNavigate()
+    const {restaurant_id, employee_id } = useParams()
+    const [employee, setEmployee] = useState(null)
+    const [imageUrl,setImageUrl] = useState(null)
+    const [imageError,setImageError] = useState(null)
+    const [clicksCount, setClicksCount] = useState(0)
 
     useEffect(() => {
+        console.log("restaurant_id:", restaurant_id);
+        console.log("employee_id:", employee_id);
+
         if (employee_id && !employee) {
             const loadEmployee = async () => {
                 try {
@@ -48,42 +50,21 @@ export default function FormEmployee() {
         } else {
             setIsLoading(false);
         }
-    }, [employee_id, employee, getEmployee,imageUrl]);
-
-    const handleChangeImage = async (e) => {
-        setLoadingImage(true)
-        const img = e.target.files[0];
-        if(img){
-          const res =await uploadFileImage(img, clicksCount, setClicksCount);
-          setLoadingImage(false)
-          setImageUrl(res)
-        }
-        window.localStorage.removeItem('image_name')
-      };
-
-       // Delete logo
-    const deleteLogo = async() => {
-        if(restaurant && !isLoading){
-          updateEmployee(employee.id,{logo_url:""})
-          await deleteImage2(employee.logo_url)
-          setMessages({text:"Imagen Eliminada correctamente",color:"success"})
-          restaurant.logo_url=""
-          setImageUrl(null)
-        }
-      }
+    }, [employee_id, employee, getEmployee]);
 
       // Verify Password and delete employee
   const handleVerifyPassword = async (password,id) => {
     const res = await verifyPassword(password)
     if(res){
       try {
-        const res_delete_employee = await deleteEmployee(id)
+        const res_delete_employee = await deleteEmployee(restaurant_id,employee_id)
         if(res_delete_employee.data){
-          return navigateTo('/admin/employees')
+          return navigateTo(`/admin/restaurants/${restaurant_id}/employees`)
+
         }
       } catch (error) {
         alert("Error al eliminar employee :c",error.data)
-        return navigateTo(`/admin/employees/update/${id}`)
+        return navigateTo(`/admin/restaurants/${restaurant_id}/employees/update/${employee_id}`)
       }
       
     }
@@ -91,7 +72,7 @@ export default function FormEmployee() {
   if (isLoading && !employee) return <SpinerComponent/>
     return (
         <div className="m-2">
-            <h2 className="text-xl font-bold color-text-primary flex justify-center gap-1"> Administra empleado/ <span className="text-black">{employee_id ? "Editar" : "Crear"}</span></h2>
+            <h2 className="text-xl font-bold color-text-primary flex justify-center gap-1"> Administrar empleado/ <span className="text-black">{employee_id ? "Editar" : "Crear"}</span></h2>
             {imageError === null ? "" : <Alert className="mt-3" severity="error">{imageError}</Alert>}
       
             {messages === null ? "" : <Alert className="mt-3" severity={messages.color}>{messages.text}</Alert>}
@@ -99,34 +80,31 @@ export default function FormEmployee() {
             <Formik
                 enableReinitialize={true}
                 initialValues={
-                    employee ?
+                    employee?
                         {
-                            name: employee.name || "",
-                            role: employee.role || "",
+                            user: employee.user ? employee.user.id : "", 
+                            role: employee.user && employee.role ? employee.role.id : "", 
                             dni: employee.dni || "",
                             address: employee.address || "",
                             age: employee.age || "",
                             phone: employee.phone || "",
-                            logo_url: imageUrl || employee.logo_url
                         }
                         :
                         {
-                            name: employee ? employee.name : "",
-                            role: employee ? employee.role : "",
-                            dni: employee ? employee.dni : "",
-                            address: employee ? employee.address : "",
-                            age: employee ? employee.age : "",
-                            phone: employee ? employee.phone : "",
-                            logo_url: employee ? employee.logo_url : ""
+                            user: employee? employee.user.id:"",
+                            role: employee? employee.role.id : "",
+                            dni: employee? employee.dni:"",
+                            address: employee? employee.address:"",
+                            age: employee? employee.age:"",
+                            phone: employee? employee.phone:"",
                         }
                         }
                 onSubmit={async (values) => {
-                    values.logo_url=imageUrl?imageUrl:""
-                    if (employee_id) {
+                    if (employee_id ) {
                         console.log("Updated..")
                         console.log(values)
                         try {
-                            updateEmployee(employee_id, values);
+                            updateEmployee(restaurant_id, employee_id,values);
                             setMessages({ text: "Datos actualizados correctamente", color: "success" })
                         } catch (error) {
                             setMessages({ text: "Error al actualizar los datos", color: "error" })
@@ -134,60 +112,42 @@ export default function FormEmployee() {
                     } else {
                         console.log("Created")
                         console.log(values)
-                        const data = await createEmployee(values)
-                        if (data) {
-                            navigateTo("/admin/employees")
+                        const data = await createEmployee( restaurant_id,values )
+                        if (data && data.id) {
+                            navigateTo(`/admin/restaurants/${restaurant_id}/employees`)
+                        } else {
+                            console.error("Error al crear el empleado:",data)
                         }
                     }
                 }}
             >
                 {({ values, handleChange, handleSubmit, isSubmitting }) => (
                     <form onSubmit={handleSubmit}>
-                        <div className="my-3 flex justify-center">
-                            <label htmlFor="logo_url" style={{ width: "100px", height: "100px" }} className={`border flex rounded-full overflow-hidden  ${loadingImage ? "bg-white" : imageUrl ? "bg-white" : "bg-teal-600"} cursor-pointer`}>
-                                <img style={{ objectFit: "cover", width: "100%", height: "100%" }}
-
-                                    src={loadingImage ? img_loading_profile : imageUrl ? imageUrl : img_default_profile_employee}
-                                    alt="imagen-logo" />
-                            </label>
-                        </div>
-
-                        <div className="my-3 ">
-                            <div className='color-text-primary font-medium flex justify-center gap-2'>
-                                <label htmlFor="logo_url" className='cursor-default'>{restaurant_id ? "Editar logo" : "Seleccionar logo"}</label>
-                                {imageUrl ? <div onClick={deleteLogo} className='cursor-default'>Eliminar logo</div> : null}
-                            </div>
-                            <input
-                                style={{ display: 'none' }}
-                                type="file"
-                                id="logo_url"
-                                onChange={handleChangeImage} />
-                        </div>
 
                         <div className="my-3 flex justify-center">
-                            <label htmlFor="name">
-                                <b>Nombre del empleado</b>
-                            </label>
+                           <label htmlFor="user">
+                              <b>Usuario </b>
+                           </label>
                             <InputForm
-                                name="name"
-                                placeholder="Escribe el nombre del empleado"
-                                onChange={handleChange}
-                                value={values.name}
-                                required={true}
-                            />
+                              name="user"
+                              placeholder="Ingrese el id del usuario a emplear"
+                              onChange={handleChange}
+                              value={values.user}
+                              required={true}
+                             />
                         </div>
                         <div className="my-3 flex justify-center">
-                            <label htmlFor="role">
-                                <b>Rol del empleado</b>
-                            </label>
-                            <InputForm
-                                name="role"
-                                placeholder="Escribe el rol del empleado"
-                                onChange={handleChange}
-                                value={values.role}
-                                required={true}
-                            />
-                        </div>
+                           <label htmlFor="role">
+                              <b>Rol</b>
+                           </label>
+                           <InputForm
+                             name="role"
+                             placeholder="Ingrese id del rol a designar"
+                             onChange={handleChange}
+                             value={values.role}
+                             required={true}
+                           />   
+                       </div>
                         <div className="my-3 flex justify-center">
                             <label htmlFor="dni">
                                 <b>DNI del empleado</b>
@@ -198,6 +158,7 @@ export default function FormEmployee() {
                                 onChange={handleChange}
                                 value={values.dni}
                                 required={true}
+                                
                             />
                         </div>
                         <div className="my-3 flex justify-center">
@@ -238,7 +199,7 @@ export default function FormEmployee() {
                         </div>
                         <div className="flex gap-2 justify-center">
                             {employee_id ? 
-                                <button onClick={() => navigateTo('/admin/employees')} type="button" className="border-2 bg-gray-100 hover-bg-gray-200 px-3 py-2 rounded">Cancelar</button>
+                                <button onClick={() => navigateTo(`/admin/restaurants/${restaurant_id}/employees`)} type="button" className="border-2 bg-gray-100 hover-bg-gray-200 px-3 py-2 rounded">Cancelar</button>
                              : null}
                             <button disabled={loadingImage||isSubmitting} type="submit" className={`${loadingImage? 'cursor-not-allowed' : 'bg-teal-500 hover:bg-teal-600'} px-3 py-2 rounded text-white`} >
 
@@ -254,26 +215,17 @@ export default function FormEmployee() {
                     </form>
                 )}
             </Formik>
-   {employee_id ? 
-        <div className="flex gap-2 justify-center mt-3">
-            <div className="grid grid-cols-2 gap-4">
-                <CardAdmin car_img={employees} card_title="Mis empleados" />
-                <CardAdmin car_img={menu} card_title="Mi menú" />
-                <CardAdmin car_img={schedule} card_title="Horario de trabajo" />
-                <CardAdmin car_img={food} card_title="Mis platos" />
-            </div>
-        </div>
-    : null}
+          {/* Modal delete */}
     {employee_id ? 
         <div className="flex justify-center mt-5">
             <WarningModal
                 titleButtonModal="Eliminar Empleado"
-                navigateToModal={'/admin/employees'}
-                textHeaderComponent={<p className="py-3 pl-3 font-semibold"><span className="text-red-500">Eliminar/</span> {employee ? employee.name : null}</p> }
+                navigateToModal={`/admin/restaurants/${restaurant_id}/employees`}
+                textHeaderComponent={<p className="py-3 pl-3 font-semibold"><span className="text-red-500">Eliminar/</span> {employee ? employee.user : null}</p> }
                 textModalComponent={
                     <div>
                         {errors.length <= 0 ? '' : <Alert className="mb-5" severity="error">{errors}</Alert>}
-                        <p className="mb-2">Si eliminas al empleado <span className="font-semibold">{employee ? employee.name : null}</span>, se eliminará.</p>
+                        <p className="mb-2">Si eliminas al empleado <span className="font-semibold">{employee ? employee.user : null}</span>, se eliminará.</p>
                         <p className="font-semibold">Para continuar, escribe la contraseña de la cuenta.</p>
                         <Formik initialValues={{ password: '' }} 
                         onSubmit={async (values) => {

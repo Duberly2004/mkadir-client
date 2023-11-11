@@ -4,6 +4,8 @@ export const getAllResturantsRequest = async () => await axios.get('restaurants/
 
 export const createResturantsRequest = async (restaurant) => await axios.post('restaurants/register',restaurant);
 
+//Admin Restaurant
+
 export const createResturantRequest = async (restaurant) => await axios.post('restaurants/create',restaurant);
 export const getResturantsRequest = async () => await axios.get('restaurants/');
 export const getResturantRequest = async (restaurant_id) => await axios.get(`restaurants/${restaurant_id}`);

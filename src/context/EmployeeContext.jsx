@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getEmployeesRequest,deleteEmployeeRequest, createEmployeeRequest, updateEmployeeRequest } from "../api/Employeeapi";
+import { getEmployeesRequest,getEmployeeRequest,deleteEmployeeRequest, createEmployeeRequest, updateEmployeeRequest } from "../api/Employeeapi";
 
 const EmployeeContext = createContext();
 export function EmployeeProvider({ children }) {
@@ -20,9 +20,9 @@ export function EmployeeProvider({ children }) {
     }
   }, [errors,messages]);
 
-  const getEmployees = async () => {
+  const getEmployees = async (restaurant_id) => {
     try {
-        const res = await getEmployeesRequest()
+        const res = await getEmployeesRequest(restaurant_id)
         setEmployees(res.data)
         setIsLoading(false)
     } catch (error) {
@@ -30,10 +30,10 @@ export function EmployeeProvider({ children }) {
     }
     }
 
-  const deleteEmployee = async (employee_id) => {
+  const deleteEmployee = async (restaurant_id,employee_id) => {
     try {
-        const res = await deleteEmployeeRequest(employee_id)
-        if(res.status === 200) setRestaurants(employees.filter((employee) => employee.id !== employee_id));
+        const res = await deleteEmployeeRequest(restaurant_id,employee_id)
+        if(res.status === 200) setEmployees(employees.filter((employee) => employee.id !== employee_id));
         return res
     } catch (error) {
         console.log(error)        
@@ -42,7 +42,7 @@ export function EmployeeProvider({ children }) {
     
     const getEmployee = async (employee_id) => {
       try {
-        const res = await getEmployeesRequest(employee_id); // Utiliza getEmployeesRequest con el ID del empleado
+        const res = await getEmployeeRequest(employee_id); // Utiliza getEmployeesRequest con el ID del empleado
         setIsLoading(false);
         return res;
       } catch (error) {
@@ -52,19 +52,20 @@ export function EmployeeProvider({ children }) {
     }
     
 
-  const createEmployee = async (employee) => {
+  const createEmployee = async (restaurant_id,employee_data) => {
     try {
-      const res = await createEmployeeRequest(employee)
+      const res = await createEmployeeRequest(restaurant_id,employee_data)
+      setMessages({ text: "Empleado creado correctamente", color: "success" });
       return res.data
     } catch (error) {
-      console.log(error)
+      console.error("Error al crear el empleado:", error);
       setErrors(error.response.data)
     }
   }
 
-  const updateEmployee = async (employee_id,employee_data)=>{
+  const updateEmployee = async (restaurant_id,employee_id,employee_data)=>{
     try {
-      await updateEmployeeRequest(employee_id,employee_data)
+      await updateEmployeeRequest(restaurant_id,employee_id,employee_data)
     } catch (error) {
       console.log(error)
     }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {useAuth} from '../../context/AuthContext';
 import { getMenusRequest,getMenuIsPublishedRequest } from '../../api/Restaurant.pi';
-import { getEmployeesRequest } from '../../api/Employeeapi';
+import { getEmployeeRequest } from '../../api/Employeeapi';
 
 export default function GetRestaurantPage() {
   const { restaurant_id } = useParams();
@@ -26,7 +26,7 @@ export default function GetRestaurantPage() {
 
   useEffect(() => {
     getRestaurantData();
-    getEmployeesRequest(restaurant_id)
+    getEmployeeRequest(restaurant_id)
       .then((response) => {
         const employees = response.data;
         setEmployeeCount(employees.length);
