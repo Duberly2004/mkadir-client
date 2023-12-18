@@ -18,11 +18,11 @@ export default function AdminPage() {
       </div>
       <h1 className="dark:text-white text-2xl font-bold text-center flex justify-center items-center gap-1"><FcComboChart/>Admin</h1>
       <div className="grid grid-cols-2 gap-4">
-        <CardAdmin 
+        {/*<CardAdmin 
         card_icon={FcManager}
         card_title = "Mi cuenta"
         card_url="profile/"
-        />
+        />*/}
         <CardAdmin 
         card_title = "Mis restaurantes"
         card_icon={FaStore}
